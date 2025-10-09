@@ -12,6 +12,7 @@ export default function App() {
         <h2>Password Reset Demo</h2>
         <nav>
           <a href='/login' className='btn btn-primary'>Login</a>
+          <a href='/forgot-password' className='btn btn-secondary ms-2'>Forgot Password</a>
         </nav>
       </header>
 
