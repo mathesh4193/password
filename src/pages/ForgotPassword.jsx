@@ -12,7 +12,11 @@ export default function ForgotPassword() {
     setStatus(null);
     setLoading(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API || 'https://password-reset-backend-se7q.onrender.com'}/api/auth/forgot-password`, { email });
+      await axios.post(
+        `${process.env.REACT_APP_API || 'https://password-reset-backend-se7q.onrender.com'}/api/auth/forgot-password`,
+        { email },
+        { timeout: 15000 } // abort request after 15 s so UI doesn’t stay stuck
+      );
       setStatus({ type: 'success', message: 'If that email exists you will receive a reset link.' });
     } catch (err) {
       console.error(err);
