@@ -10,6 +10,9 @@ export default function App() {
     <div className="container py-5">
       <header className="mb-4 d-flex justify-content-between align-items-center">
         <h2>Password Reset Demo</h2>
+        <nav>
+          <a href='/login' className='btn btn-primary'>Login</a>
+        </nav>
       </header>
 
       <Routes>
