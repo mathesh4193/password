@@ -17,7 +17,7 @@ export default function Login() {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API || 'https://password-reset-backend-3w9o.onrender.com'}/api/auth/login`,
+        `${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/login`,
         { email, password }
       );
 

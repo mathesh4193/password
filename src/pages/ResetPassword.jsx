@@ -33,7 +33,7 @@ export default function ResetPassword() {
       console.log('Email:', email);
       
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API || 'https://password-reset-backend-3w9o.onrender.com'}/api/auth/validate-reset-token`, {
+        const res = await axios.get(`${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/validate-reset-token`, {
           params: { token, email }
         });
         if (res.data.valid) {
@@ -64,7 +64,7 @@ export default function ResetPassword() {
     }
     setSubmitting(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API || 'https://password-reset-backend-3w9o.onrender.com'}/api/auth/reset-password`, {
+      await axios.post(`${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/reset-password`, {
         email, token, newPassword
       });
       setStatus({ type: 'success', message: 'Password updated. Redirecting to login...' });

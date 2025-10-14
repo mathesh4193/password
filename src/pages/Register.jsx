@@ -25,7 +25,7 @@ export default function Register() {
     setLoading(true);
     try {
       await axios.post(
-        `${process.env.REACT_APP_API || 'https://password-reset-backend-3w9o.onrender.com'}/api/auth/register`,
+        `${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/register`,
         { email, password, confirmPassword: confirm }
       );
       setStatus({ type: 'success', message: 'Registration successful. You may now log in.' });

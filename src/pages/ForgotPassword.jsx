@@ -13,7 +13,7 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       await axios.post(
-        `${process.env.REACT_APP_API || 'https://password-reset-backend-3w9o.onrender.com'}/api/auth/forgot-password`,
+        `${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/forgot-password`,
         { email },
         { timeout: 15000 } // abort request after 15 s so UI doesn’t stay stuck
       );
