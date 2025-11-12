@@ -7,7 +7,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(null); // { type, message }
+  const [status, setStatus] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,14 +24,9 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/register`,
-        { email, password, confirmPassword: confirm }
-      );
+      await axios.post(`${process.env.REACT_APP_API ||'https://password-reset-backend-ez4b.onrender.com'}/api/auth/register`, { email, password, confirmPassword: confirm });
       setStatus({ type: 'success', message: 'Registration successful. You may now log in.' });
-      setEmail('');
-      setPassword('');
-      setConfirm('');
+      setEmail(''); setPassword(''); setConfirm('');
     } catch (err) {
       console.error(err);
       setStatus({
@@ -49,51 +44,30 @@ export default function Register() {
         <div className="card shadow-sm">
           <div className="card-body">
             <h5 className="card-title">Register</h5>
-
             {status && <Notification type={status.type} message={status.message} />}
 
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <input type="email" className="form-control" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Confirm Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  required
-                />
+                <input type="password" className="form-control" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
               </div>
 
               <button type="submit" className="btn btn-primary" disabled={loading}>
                 {loading ? 'Registering...' : 'Register'}
               </button>
+
               <div className="mt-3">
-                <small className="text-muted">
-                  Already have an account? <a href="/login">Log in</a>
-                </small>
+                <small className="text-muted">Already have an account? <a href="/login">Log in</a></small>
               </div>
             </form>
           </div>

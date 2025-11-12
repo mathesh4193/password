@@ -4,7 +4,7 @@ import Notification from '../components/Notification';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [status, setStatus] = useState(null); // {type, message}
+  const [status, setStatus] = useState(null); 
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async e => {
@@ -13,9 +13,9 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       await axios.post(
-        `${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/forgot-password`,
+        `${process.env.REACT_APP_API ||'https://password-reset-backend-ez4b.onrender.com'}/api/auth/forgot-password`,
         { email },
-        { timeout: 15000 } // abort request after 15 s so UI doesn’t stay stuck
+        { timeout: 15000 }
       );
       setStatus({ type: 'success', message: 'If that email exists you will receive a reset link.' });
     } catch (err) {

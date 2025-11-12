@@ -17,7 +17,6 @@ export default function App() {
       </header>
 
       <Routes>
-       
         <Route path="/" element={<Register />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />

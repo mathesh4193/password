@@ -21,17 +21,13 @@ export default function ResetPassword() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    // Validate token on mount
     async function validate() {
       if (!token || !email) {
         setStatus({ type: 'error', message: 'Missing token or email in URL.' });
         setValidating(false);
         return;
       }
-      
-      console.log('Validating token:', token);
-      console.log('Email:', email);
-      
+
       try {
         const res = await axios.get(`${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/validate-reset-token`, {
           params: { token, email }
@@ -64,12 +60,11 @@ export default function ResetPassword() {
     }
     setSubmitting(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/reset-password`, {
-        email, token, newPassword
-      });
+      await axios.post(`${process.env.REACT_APP_API}/api/auth/reset-password`, { email, token, newPassword });
       setStatus({ type: 'success', message: 'Password updated. Redirecting to login...' });
-      setTimeout(() => navigate('/'), 3000);
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
+      console.error(err);
       setStatus({ type: 'error', message: (err.response?.data?.message) || 'Server error' });
     } finally {
       setSubmitting(false);
