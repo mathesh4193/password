@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Notification from '../components/Notification';
 import { useLocation, useNavigate } from 'react-router-dom';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -11,102 +12,123 @@ export default function ResetPassword() {
   const query = useQuery();
   const token = query.get('token');
   const email = query.get('email');
-  const navigate = useNavigate();
 
-  const [validating, setValidating] = useState(true);
+  const navigate = useNavigate();
+  const API = "https://password-reset-backend-ez4b.onrender.com";
+
   const [valid, setValid] = useState(false);
+  const [validating, setValidating] = useState(true);
   const [status, setStatus] = useState(null);
+
   const [newPassword, setNewPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    async function validate() {
-      if (!token || !email) {
-        setStatus({ type: 'error', message: 'Missing token or email in URL.' });
-        setValidating(false);
-        return;
-      }
-
+    async function validateToken() {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/validate-reset-token`, {
+        const res = await axios.get(`${API}/api/auth/validate-reset-token`, {
           params: { token, email }
         });
-        if (res.data.valid) {
-          setValid(true);
-        } else {
-          setStatus({ type: 'error', message: res.data.message || 'Invalid token.' });
-        }
-      } catch (err) {
-        console.error('Token validation error:', err);
-        setStatus({ type: 'error', message: (err.response?.data?.message) || 'Invalid or expired token.' });
-      } finally {
-        setValidating(false);
+        setValid(res.data.valid);
+      } catch {
+        setValid(false);
       }
+      setValidating(false);
     }
-    validate();
-  }, [token, email]);
+    validateToken();
+  }, [token, email, API]);
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus(null);
-    if (newPassword.length < 6) {
-      setStatus({ type: 'error', message: 'Password must be at least 6 characters.' });
-      return;
-    }
+
     if (newPassword !== confirm) {
-      setStatus({ type: 'error', message: 'Passwords do not match.' });
+      setStatus({ type: "error", message: "Passwords do not match" });
       return;
     }
+
     setSubmitting(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API}/api/auth/reset-password`, { email, token, newPassword });
-      setStatus({ type: 'success', message: 'Password updated. Redirecting to login...' });
+      await axios.post(`${API}/api/auth/reset-password`, {
+        email, token, newPassword
+      });
+
+      setStatus({ type: "success", message: "Password updated!" });
       setTimeout(() => navigate('/login'), 2000);
+
     } catch (err) {
-      console.error(err);
-      setStatus({ type: 'error', message: (err.response?.data?.message) || 'Server error' });
-    } finally {
-      setSubmitting(false);
+      setStatus({ type: "error", message: "Server error" });
     }
+    setSubmitting(false);
   };
 
-  if (validating) return <div className="alert alert-info">Validating link...</div>;
-
-  if (!valid) {
-    return (
-      <div className="col-md-8 mx-auto">
-        <div className="card p-4">
-          <h5>Invalid or expired link</h5>
-          <p className="text-muted">The password reset link is invalid or has expired. Please request a new link.</p>
-          {status && <Notification type="error" message={status.message} />}
-        </div>
-      </div>
-    );
-  }
+  if (validating) return <div className="alert alert-info">Validating...</div>;
+  if (!valid) return <div className="alert alert-danger">Invalid or expired link.</div>;
 
   return (
-    <div className="row justify-content-center">
+    <div className="row justify-content-center mt-5">
       <div className="col-sm-10 col-md-6">
         <div className="card shadow-sm">
           <div className="card-body">
-            <h5 className="card-title">Reset Password</h5>
-            <p className="text-muted">Enter your new password for <strong>{email}</strong></p>
 
-            {status && <Notification type={status.type === 'error' ? 'error' : 'success'} message={status.message} />}
+            <h5 className="fw-bold">Reset Password</h5>
+            <p className="text-muted">For: <b>{email}</b></p>
+
+            {status && <Notification type={status.type} message={status.message} />}
 
             <form onSubmit={handleSubmit}>
+
+              {/* New Password */}
               <div className="mb-3">
-                <label className="form-label">New password</label>
-                <input className="form-control" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required />
+                <label className="form-label fw-semibold">New Password</label>
+                <div className="input-group">
+                  <input
+                    type={showNew ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowNew(!showNew)}
+                  >
+                    <i className={`bi ${showNew ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i>
+                  </button>
+                </div>
               </div>
+
+              {/* Confirm Password */}
               <div className="mb-3">
-                <label className="form-label">Confirm password</label>
-                <input className="form-control" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} required />
+                <label className="form-label fw-semibold">Confirm Password</label>
+                <div className="input-group">
+                  <input
+                    type={showConfirm ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Confirm new password"
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                  >
+                    <i className={`bi ${showConfirm ? "bi-eye-slash-fill" : "bi-eye-fill"}`}></i>
+                  </button>
+                </div>
               </div>
-              <button className="btn btn-primary" type="submit" disabled={submitting}>
-                {submitting ? 'Saving...' : 'Save Password'}
+
+              <button className="btn btn-primary mt-2" type="submit" disabled={submitting}>
+                {submitting ? "Saving..." : "Save Password"}
               </button>
+
             </form>
 
           </div>

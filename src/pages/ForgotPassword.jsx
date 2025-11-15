@@ -7,7 +7,6 @@ export default function ForgotPassword() {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // FINAL & CORRECT Backend API URL (Render)
   const API = "https://password-reset-backend-ez4b.onrender.com";
 
   const handleSubmit = async (e) => {
@@ -16,27 +15,14 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await axios.post(
-        `${API}/api/auth/forgot-password`,
-        { email },
-        { timeout: 15000 }
-      );
-
-      setStatus({
-        type: 'success',
-        message: 'If that email exists you will receive a reset link.',
-      });
-
+      await axios.post(`${API}/api/auth/forgot-password`, { email });
+      setStatus({ type: 'success', message: 'If that email exists you will receive a reset link.' });
     } catch (err) {
       console.error(err);
-
-      setStatus({
-        type: 'error',
-        message: err.response?.data?.message || 'Server error',
-      });
-    } finally {
-      setLoading(false);
+      setStatus({ type: 'error', message: err.response?.data?.message || 'Server error' });
     }
+
+    setLoading(false);
   };
 
   return (
@@ -45,40 +31,25 @@ export default function ForgotPassword() {
         <div className="card shadow-sm">
           <div className="card-body">
             <h5 className="card-title">Forgot Password</h5>
-            <p className="text-muted">
-              Enter your account email and we'll send a link to reset your password.
-            </p>
+            <p className="text-muted">Enter your email and we will send a reset link.</p>
 
-            {status && (
-              <Notification
-                type={status.type === 'error' ? 'error' : 'success'}
-                message={status.message}
-              />
-            )}
+            {status && <Notification type={status.type} message={status.message} />}
 
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Email address</label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <i className="bi bi-envelope"></i>
-                  </span>
-
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
+                <input type="email" className="form-control"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required />
               </div>
 
               <button type="submit" className="btn btn-primary" disabled={loading}>
                 {loading ? 'Sending...' : 'Send Reset Link'}
               </button>
             </form>
+
           </div>
         </div>
       </div>

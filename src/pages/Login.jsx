@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import Notification from '../components/Notification';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import Notification from "../components/Notification";
+import { useNavigate } from "react-router-dom";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(null); // { type, message }
   const navigate = useNavigate();
+
+  const API = "https://password-reset-backend-ez4b.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,74 +20,98 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API || 'https://password-reset-backend-ez4b.onrender.com'}/api/auth/login`,
-        { email, password }
-      );
-
-      setStatus({ type: 'success', message: 'Login successful! Redirecting...' });
-      setTimeout(() => navigate('/'), 1500);
+      await axios.post(`${API}/api/auth/login`, { email, password });
+      setStatus({ type: "success", message: "Login successful 🎉" });
+      setTimeout(() => navigate("/"), 1200);
     } catch (err) {
-      console.error(err);
       setStatus({
-        type: 'error',
-        message: err.response?.data?.message || 'Login failed. Please check your credentials.',
+        type: "error",
+        message: err.response?.data?.message || "Login failed.",
       });
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-sm-10 col-md-6">
-        <div className="card shadow-sm">
-          <div className="card-body">
-            <h5 className="card-title">Login</h5>
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{ background: "#f8f9fa" }}
+    >
+      <div
+        className="shadow-sm bg-white p-4"
+        style={{
+          width: "100%",
+          maxWidth: "380px",
+          borderRadius: "12px",
+          border: "1px solid #e6e6e6",
+        }}
+      >
+        <h3 className="text-center mb-4 fw-bold">Login</h3>
 
-            {status && <Notification type={status.type} message={status.message} />}
+        {status && <Notification type={status.type} message={status.message} />}
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+        <form onSubmit={handleSubmit}>
 
-              <div className="mb-3">
-                <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="mb-3">
-                <small className="text-muted">
-                  <a href="/forgot-password">Forgot password?</a>
-                </small>
-              </div>
-
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? 'Logging in...' : 'Login'}
-              </button>
-              <div className="mt-3">
-                <small className="text-muted">
-                  Don't have an account? <a href="/register">Register</a>
-                </small>
-              </div>
-            </form>
+          {/* Email */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="name@example.com"
+              style={{ padding: "10px" }}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
-        </div>
+
+          {/* Password */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">Password</label>
+
+            <div className="input-group">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="Enter your password"
+                style={{ padding: "10px" }}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <i
+                  className={`bi ${
+                    showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"
+                  }`}
+                ></i>
+              </button>
+            </div>
+          </div>
+
+          <button
+            className="btn btn-primary w-100 mt-2"
+            style={{ padding: "10px", fontWeight: 600 }}
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
+          <div className="mt-3 text-center">
+            <span className="text-muted">Don't have an account? </span>
+            <a href="/register" className="fw-semibold" style={{ textDecoration: "none" }}>
+              Register
+            </a>
+          </div>
+
+        </form>
       </div>
     </div>
   );
